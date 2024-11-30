@@ -1,52 +1,39 @@
-﻿using System;
-using System.Net.Http;
+﻿using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace SendSMS
 {
-    public class SmsService
+    class Program
     {
-        private const string ApiUrl = "https://www.ezagel.com/portex_ws/service.asmx/Send_SMS";
-        private const string User = "Edge-pro";
-        private const string Password = "hM8-59";
-        private const string Sender = "RSC";
-        private const string Validity = "";
-        private const string StartTime = "";
-        private const string Service = "";
-        private const string SmsTag = "OTP";
-
-        public static async Task<ServiceResponse> SendOtp(string phoneNumber, string otp)
+        static async Task Main(string[] args)
         {
-            // Validate inputs
-            string validationError = ValidationService.ValidateInputs(phoneNumber, otp);
-            if (!string.IsNullOrEmpty(validationError))
-            {
-                return new ServiceResponse(false, validationError);
-            }
 
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) 
+                .AddJsonFile("appsettings.json") 
+                .Build();
 
-            using (HttpClient client = new HttpClient())
-            {
-                try
-                {
-                    Guid guid = Guid.NewGuid();
-                    string requestUrl = $"{ApiUrl}?Msg_ID={guid}&Mobile_NO={phoneNumber}&Body=Your+OTP+is+{otp}&Validty={Validity}&StartTime={StartTime}&Sender={Sender}&User={User}&Password={Password}&Service={Service}&SMSTag={SmsTag}";
+            
+            var smsSettings = configuration.GetSection("SmsSettings");
 
-                    HttpResponseMessage response = await client.GetAsync(requestUrl);
-                    string responseContent = await response.Content.ReadAsStringAsync();
+            string apiUrl = smsSettings["ApiUrl"];
+            string sender = smsSettings["Sender"];
+            string user = smsSettings["User"];
+            string password = smsSettings["Password"];
+            string service = smsSettings["Service"];
+            string smsTag = smsSettings["SmsTag"];
 
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        return new ServiceResponse(false, responseContent);
-                    }
+            Console.Write("Enter an Egyptian phone number: ");
+            string phoneNumber = Console.ReadLine();
+            string validity = "";  
+            string startTime = "";
 
-                    return new ServiceResponse(true, responseContent);
-                }
-                catch (Exception ex)
-                {
-                    return new ServiceResponse(false, ex.Message);
-                }
-            }
+            // Send OTP request
+            var result = await SmsService.SendOtp(apiUrl, phoneNumber, validity, startTime, sender, user, password, service, smsTag);
+            Console.WriteLine($"Result: {(result._IsSuccess ? "Success" : "Failed")}");
+            Console.WriteLine($"Message: {result.Message}");
         }
     }
 }

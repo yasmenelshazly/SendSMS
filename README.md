@@ -54,6 +54,7 @@ The ServiceResponse class standardizes responses from the SMS service.
 a)**_IsSuccess (bool)**: Indicates the operation's success status.
 true: Successful operation.
 false: Failed operation.
+
 b)**Message (string)**: Provides details about the result.
 Success: A message from the SMS API (e.g., Success).
 Failure: Error message or validation issue.

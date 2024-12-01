@@ -48,7 +48,9 @@ Validation is handled by the ValidationService.
 
 ### 3.ServiceResponse
 The ServiceResponse class standardizes responses from the SMS service.
+
 **Structure**:
+
 a)**_IsSuccess (bool)**: Indicates the operation's success status.
 true: Successful operation.
 false: Failed operation.

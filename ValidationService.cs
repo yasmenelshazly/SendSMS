@@ -1,34 +1,25 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace SendSMS
+public static class ValidationService
 {
-    public static class ValidationService
+    
+    public static bool IsValidPhoneNumber(string phoneNumber)
     {
-        public static string ValidateInputs(string phoneNumber, string otp)
-        {
-            if (string.IsNullOrWhiteSpace(phoneNumber))
-            {
-                return "Phone number cannot be empty.";
-            }
+        
+        var phonePattern = @"^\+?20\d{10}$"; 
+        return Regex.IsMatch(phoneNumber, phonePattern);
+    }
 
-            if (!Regex.IsMatch(phoneNumber, @"^01[0125]\d{8}$"))
-            {
-                return "Invalid Egyptian mobile number. It must start with 01 followed by 0, 1, 2, or 5 and contain 11 digits.";
-            }
+    
+    public static bool IsValidOtp(string otp)
+    {
+        return otp.Length == 6 && int.TryParse(otp, out _);
+    }
 
-            // Validate OTP
-            if (string.IsNullOrWhiteSpace(otp))
-            {
-                return "OTP cannot be empty.";
-            }
-
-            if (!Regex.IsMatch(otp, @"^\d{6}$"))
-            {
-                return "Invalid OTP. It must be a 6-digit numeric value.";
-            }
-
-            return null; 
-        }
+    
+    public static bool IsNotEmpty(string input)
+    {
+        return !string.IsNullOrEmpty(input);
     }
 }

@@ -9,7 +9,7 @@ namespace SendSMS
     {
         static async Task Main(string[] args)
         {
-
+            
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory()) 
                 .AddJsonFile("appsettings.json") 
@@ -25,13 +25,16 @@ namespace SendSMS
             string service = smsSettings["Service"];
             string smsTag = smsSettings["SmsTag"];
 
-            Console.Write("Enter an Egyptian phone number: ");
-            string phoneNumber = Console.ReadLine();
+            
+            string msgId = Guid.NewGuid().ToString(); 
+            string phoneNumber = "+201021545146";  
             string validity = "";  
-            string startTime = "";
+            string startTime = ""; 
 
-            // Send OTP request
-            var result = await SmsService.SendOtp(apiUrl, phoneNumber, validity, startTime, sender, user, password, service, smsTag);
+            
+            var result = await SmsService.SendOtp(configuration , msgId, phoneNumber);
+
+            
             Console.WriteLine($"Result: {(result._IsSuccess ? "Success" : "Failed")}");
             Console.WriteLine($"Message: {result.Message}");
         }
